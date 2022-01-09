@@ -1,0 +1,160 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size: 1em;
+    line-height: 1.5em;
+}
+
+a {
+    color: #333;
+}
+a:hover {
+    text-decoration: none;
+}
+
+h1, h2 {
+    margin-bottom: 1em;
+}
+h1 {
+    font-size: 3em;
+}
+h2, h3, h4 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+h2 {
+    font-size: 2.5em;
+}
+h3 {
+    font-size: 2em;
+}
+h4 {
+    font-size: 1.5em;
+}
+
+time {
+    color: #666;
+    font-size: 1em;
+    font-style: italic;
+}
+
+strong {
+    font-weight: bold;
+}
+em {
+    font-style: italic;
+}
+small {
+    font-size: smaller;
+}
+
+p {
+    margin: 1em 0;
+}
+
+ul, ol {
+    margin-left: 40px;
+}
+ul {
+    list-style: disc;
+}
+ol {
+    list-style: decimal;
+}
+
+blockquote {
+    border-left: 10px solid #aaa;
+    background: #f0f0f0;
+    border-radius: 5px;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+blockquote p {
+    margin: auto;
+}
+
+pre {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+code.inline {
+    font-family: monospace;
+    background-color: #f0f0f0;
+    font-size: 1.25em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+img {
+    text-align: center;
+    margin: auto;
+    display: flex;
+}
+
+img.logo {
+    width: 4em;
+}
+
+body > header {
+    background-color: #44d19d;
+    padding: 20px 15px 15px 15px;
+    text-align: center;
+    width: 100%;
+}
+body > header > nav > ul {
+    list-style-type: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+body > header > nav > ul > li {
+    margin: 1em;
+}
+body > header .social img {
+    width: 1.5em;
+}
+body > header .social a {
+    display: inline-flex;
+}
+
+main {
+    margin: 2em auto;
+    max-width: 780px;
+}
+
+.posts .post {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+.posts .post h2 {
+    font-size: 2em;
+    line-height: 1.25em;
+}
+.post-meta {
+    display: block;
+    margin-bottom: 1rem;
+    opacity: .65;
+}
+
+.back-link {
+    display: block;
+    margin: 1em 0;
+}
+
+.post header {
+    margin-bottom: 1em;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+.post header h1 {
+    margin-bottom: 0.5em;
+    line-height: 1em;
+}

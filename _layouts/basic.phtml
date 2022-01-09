@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title><?php print $title; ?> - beram's blog</title>
+  <meta property="og:title" content="<?php print $title; ?>">
+  <meta name="twitter:title" content="<?php print $title; ?>">
+  <?php print \part('favicon'); ?>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<?php print \part('header'); ?>
+<main>
+  <a href="/" class="back-link">« Back to homepage.</a>
+  <article>
+    <?php print $content; ?>
+  </article>
+</main>
+</body>
+</html>

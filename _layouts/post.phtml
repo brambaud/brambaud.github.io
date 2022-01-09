@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title><?php print $title; ?> - beram's blog</title>
+  <meta property="og:title" content="<?php print $title; ?>">
+  <meta name="twitter:title" content="<?php print $title; ?>">
+  <?php print \part('favicon'); ?>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/lib/highlight.js/styles/foundation.min.css">
+</head>
+<body>
+<?php print \part('header'); ?>
+<main>
+  <a href="/" class="back-link">« Back to homepage.</a>
+  <article class="post">
+    <header>
+      <h1><?php print $title; ?></h1>
+      <?php $date = $document->metadata->getProperty('date')->value; ?>
+      <?php $displayDate = (new \DateTimeImmutable($date))->format('M d, Y'); ?>
+      <time datetime="<?php print $date ?>"><?php print $displayDate; ?></time>
+    </header>
+    <?php print $content; ?>
+  </article>
+</main>
+<script src="/assets/lib/highlight.js/highlight.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/awk.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/d.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/dockerfile.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/gherkin.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/http.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/nginx.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/twig.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
