@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>Autoload PHPUnit phar - beram's blog</title>
+  <link rel="canonical" href="https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html">
+  <meta property="og:title" content="Autoload PHPUnit phar">
+  <meta name="twitter:title" content="Autoload PHPUnit phar">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/lib/highlight.js/styles/foundation.min.css">
+</head>
+<body>
+<header>
+  <img src="/assets/images/tux_rambo.svg" alt="tux rambo" class="logo">
+  <strong>beram</strong>'s blog.
+  <nav>
+    <ul>
+      <li><a href="/about-me.html">About me</a></li>
+      <li><a href="/talks-events.html">Talks</a></li>
+    </ul>
+  </nav>
+  <div class="social">
+    <a href="https://github.com/brambaud" title="Github's Profile"><img src="/assets/images/github.svg" alt="Github"></a>
+    <a href="https://gitlab.com/beram" title="GitLab's Profile"><img src="/assets/images/gitlab.svg" alt="GitLab"></a>
+    <a href="https://twitter.com/rambaud_b" title="Twitter's Profile"><img src="/assets/images/twitter.svg" alt="Twitter"></a>
+  </div>
+</header>
+<main>
+  <a href="/" class="back-link">« Back to homepage.</a>
+  <article class="post">
+    <header>
+      <h1>Autoload PHPUnit phar</h1>
+                  <time datetime="2022-02-12">Feb 12, 2022</time>
+    </header>
+    <p>For some time now, instead of installing PHPUnit using composer or <a href="https://symfony.com/doc/current/components/phpunit_bridge.html">symfony/phpunit-bridge</a> I'm trying to use its phar.</p>
+<p>One of many reasons is because I'd like to decrease the number of downloaded dependency.</p>
+<p>
+I really like how PHPStan handles it.<br>
+<code class="inline">composer require --dev phpstan/phpstan</code> will only download the phar so no extra dependencies.
+When developing an extension you still have all the classes available and discoverable with PHPStorm or else etc..
+It is just beautiful and a great pleasure to use PHPStan or develop extensions for it! 😍
+</p>
+<p>So I am testing <a href="https://phar.io/">PHIVE</a> to manage tools that don't have the same approach as PHPStan. That's the case of PHPUnit.</p>
+<p>An issue with this setup is that PHPStan cannot analyse the tests because it won't be able to <a href="https://phpstan.org/user-guide/discovering-symbols">discover PHPUnit's symbols</a>. If you search in PHPStan's issue queue, you may find some like <a href="https://github.com/phpstan/phpstan/issues/2661">Standalone PHPUnit PHAR and TestCase class not found errors</a>.</p>
+<p>
+The way to resolve the issue at the time is no longer supported since <code class="inline">autoload_files</code>
+has been removed in version
+<a href="https://github.com/phpstan/phpstan/releases/tag/1.0.0">1.0.0</a>
+</p>
+<p>
+If we try the "new" <code class="inline">bootstrapFiles</code> configuration (it has been out for quite sometime now, so it is not that new 😛) like:
+</p>
+<pre><code class="language-yaml">parameters:
+	bootstrapFiles:
+	    - phar://%rootDir%/../../../tools/phpunit.phar
+</code></pre>
+<p>We have an error:</p>
+<pre><code class="language-shell">$ ./tools/phpstan
+Note: Using configuration file /app/phpstan.neon.dist.
+Bootstrap file phar:///app/vendor/phpstan/phpstan/../../../tools/phpunit.phar does not exist.
+</code></pre>
+<p>
+So what changed between <code class="inline">autoload_files</code> and <code class="inline">bootstrapFiles</code>?
+</p>
+<p>Not that much :P</p>
+<p>
+That's the <code class="inline">autoload_files</code> part
+(see the <a href="https://github.com/phpstan/phpstan-src/commit/7a21246cae9dd7968bf7bef92223b53f5d681b72">commit</a>
+that removed it):
+</p>
+<pre><code class="language-php">foreach ($autoloadFiles as $parameterAutoloadFile) {
+	if (!file_exists($parameterAutoloadFile)) {
+		$errorOutput-&gt;writeLineFormatted(sprintf(&#039;Autoload file %s does not exist.&#039;, $parameterAutoloadFile));
+		throw new \PHPStan\Command\InceptionNotSuccessfulException();
+	}
+	(static function (string $file) use ($container): void {
+		require_once $file;
+	})($parameterAutoloadFile);
+}
+</code></pre>
+<p>
+And that's the <code class="inline">bootstrapFiles</code>
+(see this <a href="https://github.com/phpstan/phpstan-src/blob/425dee71bf94bfea60afd42aea99377c198e283f/src/Command/CommandHelper.php#L477">file</a>):
+</p>
+<pre><code class="language-php">private static function executeBootstrapFile(
+	string $file,
+	Container $container,
+	Output $errorOutput,
+	bool $debugEnabled,
+): void
+{
+	if (!is_file($file)) {
+		$errorOutput-&gt;writeLineFormatted(sprintf(&#039;Bootstrap file %s does not exist.&#039;, $file));
+		throw new InceptionNotSuccessfulException();
+	}
+	try {
+		(static function (string $file) use ($container): void {
+			require_once $file;
+		})($file);
+	} catch (Throwable $e) {
+		$errorOutput-&gt;writeLineFormatted(sprintf(&#039;%s thrown in %s on line %d while loading bootstrap file %s: %s&#039;, get_class($e), $e-&gt;getFile(), $e-&gt;getLine(), $file, $e-&gt;getMessage()));
+
+		if ($debugEnabled) {
+			$errorOutput-&gt;writeLineFormatted($e-&gt;getTraceAsString());
+		}
+
+		throw new InceptionNotSuccessfulException();
+	}
+}
+</code></pre>
+<p>
+The first one uses <code class="inline">file_exists</code> whereas the latter uses <code class="inline">is_file</code>.
+</p>
+<p>If you isolate this part we'll see the difference. Let's execute this script:</p>
+<pre><code class="language-php">&lt;?php
+
+$path = &#039;phar://&#039;.__DIR__.&#039;/some.phar&#039;;
+
+\var_dump(
+    \file_exists($path),
+    \is_file($path),
+);
+</code></pre>
+<p>The result is:</p>
+<pre><code class="language-shell">$ php require-phar.php
+bool(true)
+bool(false)
+</code></pre>
+<p>At first, I didn't know if it was a bug in PHP or the expected behavior. I've even opened an <a href="https://github.com/php/php-src/issues/8087">issue</a> to have more information on it 😅</p>
+<p>
+After a little pause and some fresh air it became clearer when I thought about the fact that
+<code class="inline">is_file</code> works great with file inside a phar:
+</p>
+<pre><code class="language-php">&lt;?php
+
+\is_file(&#039;phar://&#039;.__DIR__.&#039;/some.phar/file.php&#039;);
+</code></pre>
+<p>Ho! Wait! <code  class="inline">'phar://'.__DIR__.'/some.phar'</code> is considered a directory!</p>
+<p>
+Ok so now that we know how PHPStan handle the <code class="inline">bootstrapFiles</code>,
+how could we configure it to let its autoloader access PHPUnit?
+</p>
+<p>
+Since <code class="inline">require_once</code> is used we could just directly use the phar file:
+</p>
+<pre><code class="language-yaml">parameters:
+	bootstrapFiles:
+	    - ./tools/phpunit.phar
+</code></pre>
+<p>
+It works nevertheless <code class="inline">require_once</code> also execute the code.
+</p>
+<p>Do we really want to execute a code that has not been designed to be required this way?</p>
+<p>Let's take a look!</p>
+<p>When requiring a phar like that:</p>
+<pre><code class="language-php">require_once __DIR__.&#039;/phpunit.phar&#039;;
+</code></pre>
+<p>The <a href="https://www.php.net/manual/en/phar.fileformat.stub.php">phar file stub</a> is the executed file.</p>
+<p>The stub for PHPUnit phar looks like this (it is the <a href="https://github.com/theseer/autoload">PHP Autoload Builder</a> <a href="https://github.com/sebastianbergmann/phpunit/blob/42839036a3392d124e12dea4c7b76fbf818123e0/build/templates/binary-phar-autoload.php.in">template</a> used by PHPUnit):</p>
+<pre><code class="language-php">#!/usr/bin/env php
+&lt;?php
+if (!version_compare(PHP_VERSION, PHP_VERSION, &#039;=&#039;)) {
+    fwrite(
+        STDERR,
+        sprintf(
+            &#039;%s declares an invalid value for PHP_VERSION.&#039; . PHP_EOL .
+            &#039;This breaks fundamental functionality such as version_compare().&#039; . PHP_EOL .
+            &#039;Please use a different PHP interpreter.&#039; . PHP_EOL,
+
+            PHP_BINARY
+        )
+    );
+
+    die(1);
+}
+
+if (version_compare(&#039;7.3.0&#039;, PHP_VERSION, &#039;&gt;&#039;)) {
+    fwrite(
+        STDERR,
+        sprintf(
+            &#039;PHPUnit X.Y.Z by Sebastian Bergmann and contributors.&#039; . PHP_EOL . PHP_EOL .
+            &#039;This version of PHPUnit requires PHP &gt;= 7.3.&#039; . PHP_EOL .
+            &#039;You are using PHP %s (%s).&#039; . PHP_EOL,
+            PHP_VERSION,
+            PHP_BINARY
+        )
+    );
+
+    die(1);
+}
+
+foreach ([&#039;dom&#039;, &#039;json&#039;, &#039;libxml&#039;, &#039;mbstring&#039;, &#039;tokenizer&#039;, &#039;xml&#039;, &#039;xmlwriter&#039;] as $extension) {
+    if (extension_loaded($extension)) {
+        continue;
+    }
+
+    fwrite(
+        STDERR,
+        sprintf(
+            &#039;PHPUnit requires the &quot;%s&quot; extension.&#039; . PHP_EOL,
+            $extension
+        )
+    );
+
+    die(1);
+}
+
+if (__FILE__ === realpath($_SERVER[&#039;SCRIPT_NAME&#039;])) {
+    $execute = true;
+} else {
+    $execute = false;
+}
+
+$options = getopt(&#039;&#039;, array(&#039;prepend:&#039;, &#039;manifest&#039;));
+
+if (isset($options[&#039;prepend&#039;])) {
+    require $options[&#039;prepend&#039;];
+}
+
+if (isset($options[&#039;manifest&#039;])) {
+    $printManifest = true;
+}
+
+unset($options);
+
+define(&#039;__PHPUNIT_PHAR__&#039;, str_replace(DIRECTORY_SEPARATOR, &#039;/&#039;, __FILE__));
+define(&#039;__PHPUNIT_PHAR_ROOT__&#039;, &#039;phar://___PHAR___&#039;);
+
+Phar::mapPhar(&#039;___PHAR___&#039;);
+
+spl_autoload_register(
+    function ($class) {
+        static $classes = null;
+
+        if ($classes === null) {
+            $classes = [___CLASSLIST___];
+        }
+
+        if (isset($classes[$class])) {
+            require_once &#039;phar://___PHAR___&#039; . $classes[$class];
+        }
+    },
+    ___EXCEPTION___,
+    ___PREPEND___
+);
+
+foreach ([___CLASSLIST___] as $file) {
+    require_once &#039;phar://___PHAR___&#039; . $file;
+}
+
+require __PHPUNIT_PHAR_ROOT__ . &#039;/phpunit/Framework/Assert/Functions.php&#039;;
+
+if ($execute) {
+    if (isset($printManifest)) {
+        print file_get_contents(__PHPUNIT_PHAR_ROOT__ . &#039;/manifest.txt&#039;);
+
+        exit;
+    }
+
+    unset($execute);
+
+    PHPUnit\TextUI\Command::main();
+}
+
+__HALT_COMPILER();
+</code></pre>
+<p>It starts with some check about PHPUnit requirements, contains the autoload part which interest us, the entry point to execute PHPUnit command, and some extra options.</p>
+<p>You could see that it will only execute PHPUnit when the phar is directly executed from command line thanks to:</p>
+<pre><code class="language-php">//..
+
+if (__FILE__ === realpath($_SERVER[&#039;SCRIPT_NAME&#039;])) {
+    $execute = true;
+} else {
+    $execute = false;
+}
+
+// ...
+
+if ($execute) {
+    // ...
+    PHPUnit\TextUI\Command::main();
+}
+
+//..
+</code></pre>
+<p>That's actually pretty nice! It already contains everything we need and want out of the box!</p>
+<p>I also discover that another PHPUnit phar is available! This one is especially built to use PHPUnit as a library only! It is absolutely awesome! Take a look at the <a href="https://github.com/sebastianbergmann/phpunit/blob/42839036a3392d124e12dea4c7b76fbf818123e0/build/templates/library-phar-autoload.php.in">template of the phar stub file</a>:</p>
+<pre><code class="language-php">&lt;?php declare(strict_types=1);
+define(&#039;__PHPUNIT_PHAR__&#039;, str_replace(DIRECTORY_SEPARATOR, &#039;/&#039;, __FILE__));
+define(&#039;__PHPUNIT_PHAR_ROOT__&#039;, &#039;phar://___PHAR___&#039;);
+
+Phar::mapPhar(&#039;___PHAR___&#039;);
+
+spl_autoload_register(
+    function ($class) {
+        static $classes = null;
+
+        if ($classes === null) {
+            $classes = [___CLASSLIST___];
+        }
+
+        if (isset($classes[$class])) {
+            require_once &#039;phar://___PHAR___&#039; . $classes[$class];
+        }
+    },
+    ___EXCEPTION___,
+    ___PREPEND___
+);
+
+foreach ([___CLASSLIST___] as $file) {
+    require_once &#039;phar://___PHAR___&#039; . $file;
+}
+
+require __PHPUNIT_PHAR_ROOT__ . &#039;/phpunit/Framework/Assert/Functions.php&#039;;
+
+__HALT_COMPILER();
+</code></pre>
+<p>It contains only the autoload part!</p>
+<p>We could use this one if we want to make sure nothing else pollutes PHPStan analysis.</p>
+<blockquote><p>PHPUnit phar is scoped. Namespaces are prefix with "PHPUnit" except for "phpspec/prophecy". If your autoload is free of PHPUnit and Prophecy you should be fine and have no collision at all!</p>
+</blockquote>
+<h2>Conclusion (or TL;DR 😛)</h2>
+<p>If you have to autoload PHPUnit phar just require it!</p>
+<p>Two PHPUnit phars are available: one to be used as a binary the other as a library. Choose the one matching your needs!</p>
+<p>Awesome work from PHPUnit maintainers!</p>
+  </article>
+</main>
+<script src="/assets/lib/highlight.js/highlight.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/awk.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/d.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/dockerfile.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/gherkin.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/http.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/nginx.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/twig.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
