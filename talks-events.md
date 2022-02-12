@@ -1,6 +1,7 @@
 @metadata
 layout: basic
 title: Talks & Events
+canonical: talks-events.html
 @endmetadata
 
 # Talks & Events

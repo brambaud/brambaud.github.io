@@ -2,6 +2,7 @@
 layout: post
 title: Autoload PHPUnit phar
 date: 2022-02-12
+canonical: 2022-02-12-autoload-phpunit-phar.html
 @endmetadata
 
 For some time now, instead of installing PHPUnit using composer

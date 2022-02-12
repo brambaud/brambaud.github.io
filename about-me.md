@@ -1,6 +1,7 @@
 @metadata
 layout: basic
 title: About Me
+canonical: about-me.html
 @endmetadata
 
 # About me

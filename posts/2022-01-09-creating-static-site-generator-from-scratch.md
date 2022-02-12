@@ -2,6 +2,7 @@
 layout: post
 title: Creating a static site generator from scratch - useless but fun 😛
 date: 2022-01-09
+canonical: 2022-01-09-creating-static-site-generator-from-scratch.html
 @endmetadata
 
 ![Wait.. What??](/assets/images/first/wait_what.jpeg)

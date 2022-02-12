@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="utf-8">
   <title><?php print $title; ?> - beram's blog</title>
+  <link rel="canonical" href="<?php print \sprintf('https://brambaud.github.io/%s', $document->metadata->getProperty('canonical')->value); ?>">
   <meta property="og:title" content="<?php print $title; ?>">
   <meta name="twitter:title" content="<?php print $title; ?>">
   <?php print \part('favicon'); ?>
