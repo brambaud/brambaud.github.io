@@ -380,6 +380,9 @@ It contains only the autoload part!
 
 We could use this one if we want to make sure nothing else pollutes PHPStan analysis.
 
+> PHPUnit phar is scoped. Namespaces are prefix with "PHPUnit" except for "phpspec/prophecy".
+> If your autoload is free of PHPUnit and Prophecy you should be fine and have no collision at all!
+
 ## Conclusion (or TL;DR 😛)
 
 If you have to autoload PHPUnit phar just require it!
