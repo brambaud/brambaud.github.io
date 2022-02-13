@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>beram's blog</title>
+        <link>https://brambaud.github.io/</link>
+        <atom:link href="https://brambaud.github.io/rss.xml" rel="self" type="application/rss+xml" />
+        <description>beram's blog about stuffs (PHP etc..)</description>
+        <language>en-us</language>
+        <pubDate>Sat, 12 Feb 2022 00:00:00 +0000</pubDate>
+        <lastBuildDate>Sat, 12 Feb 2022 00:00:00 +0000</lastBuildDate>
+
+                <item>
+            <title>Autoload PHPUnit phar</title>
+            <link>https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html</link>
+            <pubDate>Sat, 12 Feb 2022 00:00:00 +0000</pubDate>
+            <guid>https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html</guid>
+            <description>How to let PHPStan&apos;s autoloader access PHPUnit when the using the PHPUnit phar?</description>
+        </item>
+                <item>
+            <title>Creating a static site generator from scratch - useless but fun 😛</title>
+            <link>https://brambaud.github.io/posts/2022-01-09-creating-static-site-generator-from-scratch.html</link>
+            <pubDate>Sun, 09 Jan 2022 00:00:00 +0000</pubDate>
+            <guid>https://brambaud.github.io/posts/2022-01-09-creating-static-site-generator-from-scratch.html</guid>
+            <description>A journey from having a stupid idea to realising it just for the fun of it!</description>
+        </item>
+        
+    </channel>
+</rss>
