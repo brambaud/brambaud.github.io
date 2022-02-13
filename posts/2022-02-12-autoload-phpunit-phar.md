@@ -3,6 +3,7 @@ layout: post
 title: Autoload PHPUnit phar
 date: 2022-02-12
 canonical: 2022-02-12-autoload-phpunit-phar.html
+excerpt: How to let PHPStan's autoloader access PHPUnit when the using the PHPUnit phar?
 @endmetadata
 
 For some time now, instead of installing PHPUnit using composer

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>beram's blog</title>
+        <link>https://brambaud.github.io/</link>
+        <atom:link href="https://brambaud.github.io/rss.xml" rel="self" type="application/rss+xml" />
+        <description>beram's blog about stuffs (PHP etc..)</description>
+        <language>en-us</language>
+        <pubDate><?php print (new \DateTimeImmutable('2022-02-12'))->format('r'); ?></pubDate>
+        <lastBuildDate><?php print (new \DateTimeImmutable('2022-02-12'))->format('r'); ?></lastBuildDate>
+
+        <?php foreach(\posts_from_sources($site->sources) as $post): ?>
+        <item>
+            <title><?php print $post->document->metadata->getProperty('title')->value; ?></title>
+            <link>https://brambaud.github.io<?php print $post->relativeUrl; ?></link>
+            <pubDate><?php print (new \DateTimeImmutable($post->document->metadata->getProperty('date')->value))->format('r'); ?></pubDate>
+            <guid>https://brambaud.github.io<?php print $post->relativeUrl; ?></guid>
+            <description><?php print \str_replace(['&','"',"'",'<','>'], ['&amp;','&quot;','&apos;','&lt;','&gt;'], $post->document->metadata->getProperty('excerpt')->value); ?></description>
+        </item>
+        <?php endforeach ?>
+
+    </channel>
+</rss>

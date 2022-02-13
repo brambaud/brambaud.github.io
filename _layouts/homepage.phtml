@@ -14,7 +14,19 @@
 <body>
 <?php print \part('header'); ?>
 <main>
-  <?php print $content; ?>
+  <div class="posts">
+    <?php foreach(\posts_from_sources($site->sources) as $post): ?>
+    <div class="post">
+      <h2 class="post-title">
+        <a href="<?php print $post->relativeUrl; ?>"><?php print $post->document->metadata->getProperty('title')->value; ?></a>
+      </h2>
+      <time datetime="<?php print $post->document->metadata->getProperty('date')->value; ?>" class="post-meta"><?php print $post->document->metadata->getProperty('date')->value; ?></time>
+      <p class="post-excerpt">
+        <?php print $post->document->metadata->getProperty('excerpt')->value; ?>
+      </p>
+    </div>
+    <?php endforeach ?>
+  </div>
 </main>
 </body>
 </html>

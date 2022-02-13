@@ -3,6 +3,7 @@ layout: post
 title: Creating a static site generator from scratch - useless but fun 😛
 date: 2022-01-09
 canonical: 2022-01-09-creating-static-site-generator-from-scratch.html
+excerpt: A journey from having a stupid idea to realising it just for the fun of it!
 @endmetadata
 
 ![Wait.. What??](/assets/images/first/wait_what.jpeg)

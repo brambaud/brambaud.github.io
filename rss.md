@@ -1,0 +1,3 @@
+@metadata
+layout: rss
+@endmetadata
