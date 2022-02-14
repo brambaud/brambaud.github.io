@@ -1,0 +1,9 @@
+@media only screen and (max-width: 779px) {
+    body > header {
+        width: auto;
+    }
+
+    main {
+        max-width: 90%;
+    }
+}
