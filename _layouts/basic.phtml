@@ -8,9 +8,7 @@
   <meta property="og:title" content="<?php print $title; ?>">
   <meta name="twitter:title" content="<?php print $title; ?>">
   <?php print \part('favicon'); ?>
-  <link rel="stylesheet" href="/assets/css/reset.css">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/mobile.css">
+  <?php print \part('style-main'); ?>
 </head>
 <body>
 <?php print \part('header'); ?>
@@ -20,5 +18,6 @@
     <?php print $content; ?>
   </article>
 </main>
+<?php print \part('goatcounter'); ?>
 </body>
 </html>

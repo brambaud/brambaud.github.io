@@ -8,9 +8,7 @@
   <meta property="og:title" content="<?php print $title; ?>">
   <meta name="twitter:title" content="<?php print $title; ?>">
   <?php print \part('favicon'); ?>
-  <link rel="stylesheet" href="/assets/css/reset.css">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/mobile.css">
+  <?php print \part('style-main'); ?>
   <link rel="stylesheet" href="/assets/lib/highlight.js/styles/foundation.min.css">
 </head>
 <body>
@@ -36,5 +34,6 @@
 <script src="/assets/lib/highlight.js/languages/nginx.min.js"></script>
 <script src="/assets/lib/highlight.js/languages/twig.min.js"></script>
 <script>hljs.highlightAll();</script>
+<?php print \part('goatcounter'); ?>
 </body>
 </html>
