@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://brambaud.github.io/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://brambaud.github.io/about-me.html</loc>
+        <lastmod>2022-02-12</lastmod>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://brambaud.github.io/talks-events.html</loc>
+        <lastmod>2022-02-12</lastmod>
+        <priority>0.5</priority>
+    </url>
+    <?php foreach(\posts_from_sources($site->sources) as $post): ?>
+    <item>
+        <loc>https://brambaud.github.io<?php print $post->relativeUrl; ?></loc>
+        <lastmod><?php print (new \DateTimeImmutable($post->document->metadata->getProperty('date')->value))->format('Y-m-d'); ?></lastmod>
+        <priority>0.5</priority>
+    </item>
+    <?php endforeach ?>
+</urlset>

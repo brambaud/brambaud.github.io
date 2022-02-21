@@ -3,6 +3,7 @@
 build:
 	php tools/piggy-static-generate.phar --config $(PWD)/.piggy-static.php
 	mv build/rss.html build/rss.xml
+	mv build/sitemap.html build/sitemap.xml
 
 .PHONY: clean
 clean:

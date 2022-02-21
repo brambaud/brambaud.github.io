@@ -13,4 +13,5 @@ return Config::default()
     ->withLayout('post', new Layout(__DIR__.'/_layouts/post.phtml'))
     ->withLayout('basic', new Layout(__DIR__.'/_layouts/basic.phtml'))
     ->withLayout('rss', new Layout(__DIR__.'/_layouts/rss.xml'))
+    ->withLayout('sitemap', new Layout(__DIR__.'/_layouts/sitemap.xml'))
     ;
