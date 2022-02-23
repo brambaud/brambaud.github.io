@@ -16,10 +16,10 @@
         <priority>0.5</priority>
     </url>
     <?php foreach(\posts_from_sources($site->sources) as $post): ?>
-    <item>
+    <url>
         <loc>https://brambaud.github.io<?php print $post->relativeUrl; ?></loc>
         <lastmod><?php print (new \DateTimeImmutable($post->document->metadata->getProperty('date')->value))->format('Y-m-d'); ?></lastmod>
         <priority>0.5</priority>
-    </item>
+    </url>
     <?php endforeach ?>
 </urlset>
