@@ -15,14 +15,14 @@
         <lastmod>2022-02-12</lastmod>
         <priority>0.5</priority>
     </url>
-        <item>
+        <url>
         <loc>https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html</loc>
         <lastmod>2022-02-12</lastmod>
         <priority>0.5</priority>
-    </item>
-        <item>
+    </url>
+        <url>
         <loc>https://brambaud.github.io/posts/2022-01-09-creating-static-site-generator-from-scratch.html</loc>
         <lastmod>2022-01-09</lastmod>
         <priority>0.5</priority>
-    </item>
+    </url>
     </urlset>
