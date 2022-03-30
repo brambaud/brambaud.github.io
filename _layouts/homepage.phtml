@@ -17,7 +17,9 @@
     <?php foreach(\posts_from_sources($site->sources) as $post): ?>
     <div class="post">
       <h2 class="post-title">
-        <a href="<?php print $post->relativeUrl; ?>"><?php print $post->document->metadata->getProperty('title')->value; ?></a>
+        <a href="<?php print $post->relativeUrl; ?>">
+          <?php print $post->document->metadata->getProperty('title')->value; ?>
+        </a>
       </h2>
       <time datetime="<?php print $post->document->metadata->getProperty('date')->value; ?>" class="post-meta"><?php print $post->document->metadata->getProperty('date')->value; ?></time>
       <p class="post-excerpt">
