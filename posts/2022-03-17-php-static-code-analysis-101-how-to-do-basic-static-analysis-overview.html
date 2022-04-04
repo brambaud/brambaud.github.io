@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>[PHP Static Code Analysis 101] How to do Static Code Analysis? An overview - beram's blog</title>
+  <link rel="canonical" href="https://brambaud.github.io/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html">
+  <meta property="og:title" content="[PHP Static Code Analysis 101] How to do Static Code Analysis? An overview">
+  <meta name="twitter:title" content="[PHP Static Code Analysis 101] How to do Static Code Analysis? An overview">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="/assets/css/reset.css">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/mobile.css">
+  <link rel="stylesheet" href="/assets/lib/highlight.js/styles/foundation.min.css">
+</head>
+<body>
+<header>
+  <img src="/assets/images/tux_rambo.svg" alt="tux rambo" class="logo">
+  <strong>beram</strong>'s blog.
+  <nav>
+    <ul>
+      <li><a href="/about-me.html">About me</a></li>
+      <li><a href="/talks-events.html">Talks</a></li>
+    </ul>
+  </nav>
+  <div class="social">
+    <a href="https://github.com/brambaud" title="Github's Profile"><img src="/assets/images/github.svg" alt="Github"></a>
+    <a href="https://gitlab.com/beram" title="GitLab's Profile"><img src="/assets/images/gitlab.svg" alt="GitLab"></a>
+    <a href="https://twitter.com/rambaud_b" title="Twitter's Profile"><img src="/assets/images/twitter.svg" alt="Twitter"></a>
+  </div>
+</header>
+<main>
+  <a href="/" class="back-link">« Back to homepage.</a>
+  <article class="post">
+    <header>
+      <div style="text-align: center; font-size: 1.2em; margin-bottom: 1em;">
+       🔎 PHP Static Code Analysis 101 🔍
+      </div>
+      <h1>How to do Static Code Analysis? An overview</h1>
+                  <time datetime="2022-03-17">Mar 17, 2022</time>
+    </header>
+    <p><div class="info"> <p> This article comes from the series "PHP Static Code Analysis 101 - An introduction to what's behind PHP static code analysis" </p> <ul> <li><a href="/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html">What is code analysis?</a></li> <li><a href="/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html">How to do Static Code Analysis? An overview</a></li> </ul> <p>This series is not finished yet!</p> </div></p>
+<p>If you remember from the previous post <a href="/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html">What is code analysis?</a>, you know that with static analysis we don't run/execute the code. Since we don't do that we have to find methods to analyse it 😛</p>
+<p>Maybe your first thought is to use regular expressions. Indeed it works for some parts, for instance if you check <a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer/tree/v0.1.0">the first versions of PHP-CS-Fixer</a> they mainly used them. Nevertheless, the codebase risks becoming rather complex, or you're going to be stuck at some point. I'm not sure what the regular expression to know if a variable's type has changed could look like 🤷</p>
+<p>Other technics are mainly used because they are simpler to maintain and allow analysing more things.</p>
+<p>To know which ones we could directly look at how PHP works!</p>
+<p>PHP compiles one file at a time at runtime. If we take this file:</p>
+<pre><code class="language-php">&lt;?php
+
+// Chookity
+echo &quot;I love ponies&quot;;
+</code></pre>
+<p>PHP will compile it into the following opcodes:</p>
+<pre><code class="language-php">000 ECHO string(&quot;I love ponies&quot;)
+001 RETURN int(1)
+</code></pre>
+<p>At the end, those opcodes are "executed" on the Zend Virtual Machine. In fact an opcode is a VM instruction.</p>
+<blockquote><p>If you would like to know more about the Zend Virtual Machine you should definitively read the article <a href="https://www.npopov.com/2017/04/14/PHP-7-Virtual-machine.html">PHP 7 Virtual Machine</a> from <a href="https://www.npopov.com/aboutMe.html">Nikita Popov</a> and <a href="https://www.phpinternalsbook.com/php7/zend_engine.html">the PHP Internals Book section about it</a>.</p>
+</blockquote>
+<p>To produce opcodes from our code, PHP will use several technics from compilation theory.</p>
+<p><picture> <source media="all and (max-width: 639px)" srcset="/assets/images/post/static-analysis/how-php-works-mobile.svg"> <img style="width: 100%;" alt="overview how php works" src="/assets/images/post/static-analysis/how-php-works.svg"> </picture></p>
+<p>A lexer converts the code into tokens, that's lexical analysis. A parser converts the tokens into an Abstract Syntax Tree (AST), that's syntax analysis.</p>
+<p>Let's take the following sentence : "Do you love ponies?".</p>
+<p>To understand it, first you decompose it into symbols:</p>
+<p><ul> <li>a string: "Do"</li> <li>a whitespace: " "</li> <li>a string: "you"</li> <li>a whitespace: " "</li> <li>a string: "love"</li> <li>a whitespace: " "</li> <li>a string: "ponies"</li> <li>a special string: a question mark "?"</li> </ul></p>
+<p>Then it is easier to understand that "Do" and "love" are words because they are separated by a whitespace. You know it is a question because you have a question mark at the end. You know the grammar rules. To understand the phrase you need to know that "Love" is the present tense of the verb "to love", "you" is the subject of the sentence and either the second-person singular or the second-person plural depending on the context, the plural noun "ponies" is the object of the sentence.</p>
+<p>We need to do kind of the same work with programming language.</p>
+<p>A token is a symbol with a specific meaning. With this stream of tokens it is simpler to create an AST to understand the syntax of the language.</p>
+<p>Tl;DR: We start from a big string. We decompose it into a "linear" stream of tokens that we use to create a tree (AST). This tree helps us understand the syntax and what we should instruct the machine to do.</p>
+<p>Tokens and AST are the core of static analysis!</p>
+<p>In the next articles from this series we'll learn more on how to do static analysis with Tokens. So stay tune!</p>
+  </article>
+</main>
+<script src="/assets/lib/highlight.js/highlight.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/awk.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/d.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/dockerfile.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/gherkin.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/http.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/nginx.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/twig.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script data-goatcounter="https://beram-blog.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

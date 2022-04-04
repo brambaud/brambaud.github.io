@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>[PHP Static Code Analysis 101] What is Static Code Analysis? - beram's blog</title>
+  <link rel="canonical" href="https://brambaud.github.io/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html">
+  <meta property="og:title" content="[PHP Static Code Analysis 101] What is Static Code Analysis?">
+  <meta name="twitter:title" content="[PHP Static Code Analysis 101] What is Static Code Analysis?">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="/assets/css/reset.css">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/mobile.css">
+  <link rel="stylesheet" href="/assets/lib/highlight.js/styles/foundation.min.css">
+</head>
+<body>
+<header>
+  <img src="/assets/images/tux_rambo.svg" alt="tux rambo" class="logo">
+  <strong>beram</strong>'s blog.
+  <nav>
+    <ul>
+      <li><a href="/about-me.html">About me</a></li>
+      <li><a href="/talks-events.html">Talks</a></li>
+    </ul>
+  </nav>
+  <div class="social">
+    <a href="https://github.com/brambaud" title="Github's Profile"><img src="/assets/images/github.svg" alt="Github"></a>
+    <a href="https://gitlab.com/beram" title="GitLab's Profile"><img src="/assets/images/gitlab.svg" alt="GitLab"></a>
+    <a href="https://twitter.com/rambaud_b" title="Twitter's Profile"><img src="/assets/images/twitter.svg" alt="Twitter"></a>
+  </div>
+</header>
+<main>
+  <a href="/" class="back-link">« Back to homepage.</a>
+  <article class="post">
+    <header>
+      <div style="text-align: center; font-size: 1.2em; margin-bottom: 1em;">
+       🔎 PHP Static Code Analysis 101 🔍
+      </div>
+      <h1>What is Static Code Analysis?</h1>
+                  <time datetime="2022-03-15">Mar 15, 2022</time>
+    </header>
+    <p><div class="info"> <p> This article comes from the series "PHP Static Code Analysis 101 - An introduction to what's behind PHP static code analysis" </p> <ul> <li><a href="/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html">What is code analysis?</a></li> <li><a href="/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html">How to do Static Code Analysis? An overview</a></li> </ul> <p>This series is not finished yet!</p> </div></p>
+<h2>What is Code Analysis?</h2>
+<p>To understand what is <strong>static code analysis</strong> let's try to understand why we want to analyse the code.</p>
+<p>With <strong>code analysis</strong> we are trying to determine the behaviors of a program. We could look for a lot of different things like: Is it robust? Is it safe? Is it buggy? Does it respect some conventions? etc.. We want to know it better! And we want to do this automatically!</p>
+<p>Let's take an example code from <a href="https://psalm.dev/articles/detect-security-vulnerabilities-with-psalm">Psalm</a>:</p>
+<pre><code class="language-php">&lt;?php // --taint-analysis
+
+/** @psalm-immutable */
+class User {
+    public $id;
+    public function __construct($userId) {
+        $this-&gt;id = $userId;
+    }
+}
+
+class UserUpdater {
+    public static function deleteUser(PDO $pdo, User $user) : void {
+        $pdo-&gt;exec(&quot;delete from users where user_id = &quot; . $user-&gt;id);
+    }
+}
+
+$userObj = new User($_GET[&quot;user_id&quot;]);
+
+UserUpdater::deleteUser(new PDO(), $userObj);
+</code></pre>
+<p><p> It is fairly easy to spot the security issue here. We use <code class="inline">$_GET["user_id"]</code> directly in a SQL query. It is an input and we should not trust inputs. Remember to be <a href="https://en.wikipedia.org/wiki/Defensive_programming">defensive</a> and never trust the user. (In fact, never trust anyone 😛) </p></p>
+<blockquote><p>It has nothing to do with the subject of this article but I advise you to take a look at <a href="https://www.youtube.com/watch?v=Gl9td0zGLhw">Ocramius talk about extremely defensive PHP</a>.</p>
+</blockquote>
+<p>It is fairly easy here because we have all the code right in front our eyes. Nevertheless, we are humans. We make mistakes. We cannot have all the code in our mind. Our cognitive load is limited. We are going to miss some of those errors.</p>
+<p>Automate it allow us to focus on what's important. For instance, how to fix this issue.</p>
+<blockquote><p>It is when we have a working code that the real fun and important work begins 😉</p>
+</blockquote>
+<h2>Difference between Static and Dynamic code analysis</h2>
+<p>Inevitably if we talk about <strong>static code analysis</strong> it means that <strong>dynamic code analysis</strong> is a thing too 🤓</p>
+<p>With static analysis we don't run/execute the program to determine its behaviors.</p>
+<p>With dynamic analysis we have to run/execute it to monitore/observe the execution states. Computing the code coverage according to a test suite is a standard dynamic analysis technique.</p>
+<p>It is generally quicker to statically analyse a program. We don't need the full app running (no database required etc..) for instance.</p>
+<p>But it could be challenging to! For instance, key information in Drupal are determined at runtime or stored in the database by default like the service container definition.</p>
+<blockquote><p>They are for good reasons we won't explain right now. <a href="https://www.drupal.org/node/2497243">The issue introducing the service container definition stored in the database</a> is an interesting read 😉</p>
+</blockquote>
+<p>In the next articles from this series we are going to overview how to do static analysis in PHP. So stay tune!</p>
+<p><div class="info"> <p>Next article: <a href="/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html">How to do basic Static Code Analysis? An overview</a></p> </div></p>
+  </article>
+</main>
+<script src="/assets/lib/highlight.js/highlight.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/awk.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/d.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/dockerfile.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/gherkin.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/http.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/nginx.min.js"></script>
+<script src="/assets/lib/highlight.js/languages/twig.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script data-goatcounter="https://beram-blog.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

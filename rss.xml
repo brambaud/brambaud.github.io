@@ -10,6 +10,20 @@
         <lastBuildDate>Sat, 12 Feb 2022 00:00:00 +0000</lastBuildDate>
 
                 <item>
+            <title>[PHP Static Code Analysis 101] How to do Static Code Analysis? An overview</title>
+            <link>https://brambaud.github.io/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html</link>
+            <pubDate>Thu, 17 Mar 2022 00:00:00 +0000</pubDate>
+            <guid>https://brambaud.github.io/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html</guid>
+            <description>What if I told you PHP already uses the concept behind static code analysis?</description>
+        </item>
+                <item>
+            <title>[PHP Static Code Analysis 101] What is Static Code Analysis?</title>
+            <link>https://brambaud.github.io/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html</link>
+            <pubDate>Tue, 15 Mar 2022 00:00:00 +0000</pubDate>
+            <guid>https://brambaud.github.io/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html</guid>
+            <description>A very short introduction to static code analysis. What if I told you that PHP itself already uses the concept behind static code analysis?</description>
+        </item>
+                <item>
             <title>Autoload PHPUnit phar</title>
             <link>https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html</link>
             <pubDate>Sat, 12 Feb 2022 00:00:00 +0000</pubDate>

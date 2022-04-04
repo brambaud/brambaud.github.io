@@ -16,6 +16,16 @@
         <priority>0.5</priority>
     </url>
         <url>
+        <loc>https://brambaud.github.io/posts/2022-03-17-php-static-code-analysis-101-how-to-do-basic-static-analysis-overview.html</loc>
+        <lastmod>2022-03-17</lastmod>
+        <priority>0.5</priority>
+    </url>
+        <url>
+        <loc>https://brambaud.github.io/posts/2022-03-15-php-static-code-analysis-101-what-is-code-analysis.html</loc>
+        <lastmod>2022-03-15</lastmod>
+        <priority>0.5</priority>
+    </url>
+        <url>
         <loc>https://brambaud.github.io/posts/2022-02-12-autoload-phpunit-phar.html</loc>
         <lastmod>2022-02-12</lastmod>
         <priority>0.5</priority>
