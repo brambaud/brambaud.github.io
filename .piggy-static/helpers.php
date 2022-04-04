@@ -21,3 +21,7 @@ function posts_from_sources(Sources $sources): array {
 
     return $posts;
 }
+
+function unique_key(): string {
+    return \bin2hex(\random_bytes(8));
+}
