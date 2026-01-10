@@ -13,4 +13,4 @@ Ahoy! Welcome to my personal blog!
 My name is Benjamin Rambaud aka **beram**.
 I'm a working as a senior PHP software engineer at [ekino](https://ekino.com).
 
-I try my best to be a software craftsman.
+I try my best to be a software crafter.
