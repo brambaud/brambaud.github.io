@@ -30,17 +30,17 @@ jobs:
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}
         steps:
-            - uses: actions/checkout@v2
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: '8.4'
-            - name: Build
-              run: make
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                path: ./build
+            -   uses: actions/checkout@v2
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.4'
+            -   name: Build
+                run: make
+            -   name: Upload artifact
+                uses: actions/upload-pages-artifact@v3
+                with:
+                    path: ./build
 
     deploy:
         environment:
@@ -49,6 +49,6 @@ jobs:
         runs-on: ubuntu-24.04
         needs: build
         steps:
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
+            -   name: Deploy to GitHub Pages
+                id: deployment
+                uses: actions/deploy-pages@v4
